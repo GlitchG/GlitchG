@@ -23,4 +23,4 @@ GA4 + BigQuery (where most of my SQL lives), server-side GTM, AppsFlyer, dbt, Lo
 
 I run [portugalevents.eu](https://portugalevents.eu) — a small platform helping local events in Portugal get found. n8n + GA4 + BigQuery + Looker Studio.
 
-Open to senior / lead analytics roles, remote, EU. [LinkedIn](https://linkedin.com/in/glebads).
+Open to marketing data analytics roles, remote. [LinkedIn](https://linkedin.com/in/glebads).
