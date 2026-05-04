@@ -4,8 +4,6 @@ Marketing data analyst, 12+ years in. Based in Madeira, Portugal — working rem
 
 I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Dashboards that surface the right metric at the right grain. Pipelines that make the analysis possible at all.
 
-The signature project on my CV: unifying two completely separate post-acquisition data ecosystems into a single BigQuery warehouse, then building traffic-source-specific attribution on top of it. The dashboards from that work drove product decisions for over a year.
-
 #### Stack
 
 GA4 + BigQuery (where most of my SQL lives), server-side GTM, AppsFlyer, dbt, Looker Studio, Power BI. Meta Ads, Google Ads, Yandex Direct on the buying side. n8n for the glue work.
