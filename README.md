@@ -1,14 +1,41 @@
-### Hi, I'm Gleb
+### Hi, I'm Gleb 👋
 
-Marketing data analyst, 12+ years in. Based in Madeira, Portugal — working remotely with teams across Europe.
+**Marketing Data Analyst & Analytics Engineer** · 12+ years in · Madeira, Portugal — working remotely with teams across Europe.
 
-I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Dashboards that surface the right metric at the right grain. Pipelines that make the analysis possible at all.
+Open to **Data-Driven / AI-Native Marketing Manager** and **Marketing Analytics** roles, remote.
+
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-025E8C?logo=amazondynamodb&logoColor=white)
+![BigQuery](https://img.shields.io/badge/BigQuery-669DF6?logo=googlebigquery&logoColor=white)
+![GA4](https://img.shields.io/badge/GA4-E37400?logo=googleanalytics&logoColor=white)
+![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white)
+![Looker Studio](https://img.shields.io/badge/Looker%20Studio-4285F4?logo=looker&logoColor=white)
+![n8n](https://img.shields.io/badge/n8n-EA4B71?logo=n8n&logoColor=white)
+
+I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Marketing mix models that size what budget really drives. Dashboards that surface the right metric at the right grain. And, increasingly, the pipelines and bots that turn the analysis into action automatically.
+
+#### What I do
+
+- **Attribution & marketing mix modeling (MMM)** — channel impact, budget allocation, incrementality
+- **Analytics engineering** — GA4 → BigQuery → dbt → BI, server-side GTM
+- **Marketing automation & PPC optimization** — profit-aware budget and keyword management, human-in-the-loop
 
 #### Stack
 
-GA4 + BigQuery (where most of my SQL lives), server-side GTM, AppsFlyer, dbt, Looker Studio, Power BI. Meta Ads, Google Ads, Yandex Direct on the buying side. n8n for the glue work.
+**Data & modeling:** GA4 + BigQuery (where most of my SQL lives), dbt, server-side GTM, AppsFlyer
+**BI:** Looker Studio, Power BI
+**Ad platforms:** Google Ads (incl. the API), Meta Ads, Yandex Direct
+**Automation:** Python, n8n, Telegram bots
+**Languages:** SQL, Python
 
-#### Things on this profile
+#### Featured projects
+
+**Marketing automation & optimization** ⚡ *(latest)*
+
+- **[google-ads-budget-bot](https://github.com/GlitchG/google-ads-budget-bot)** — margin-aware Google Ads **budget optimization from Telegram**: weekly audits, profit-based recommendations (break-even ROAS, not vanity ROAS), conversion-lag aware, applied with one tap. Multi-account. *Python · Google Ads API.*
+- **[google-ads-search-terms-bot](https://github.com/GlitchG/google-ads-search-terms-bot)** — **negative-keyword & new-keyword management from Telegram**: a deterministic, auditable rules engine (no LLM), human-in-the-loop approval, idempotent writes. *Python · Google Ads API.*
+
+**Analytics & modeling**
 
 - **[ga4-attribution-models](https://github.com/GlitchG/ga4-attribution-models)** — eight attribution models in BigQuery SQL: last-click, first-click, linear, time decay, position-based, last non-direct, data-driven (BQ ML), and a cross-model comparison. Runs on Google's public GA4 sample.
 - **[bigquery-meridian-mmm](https://github.com/GlitchG/bigquery-meridian-mmm)** — marketing mix model using Google's Meridian library. Bayesian inference, full posterior distributions, geo-level support, MCMC diagnostics.
@@ -19,6 +46,10 @@ GA4 + BigQuery (where most of my SQL lives), server-side GTM, AppsFlyer, dbt, Lo
 
 #### Outside GitHub
 
-I run [portugalevents.eu](https://portugalevents.eu) — a small platform helping local events in Portugal get found. n8n + GA4 + BigQuery + Looker Studio.
+I run **[portugalevents.eu](https://portugalevents.eu)** — a small platform helping local events in Portugal get found. n8n + GA4 + BigQuery + Looker Studio.
 
-Open to marketing data analytics roles, remote. [LinkedIn](https://linkedin.com/in/glebads).
+#### Let's talk
+
+Open to **AI-Native Marketing Manager** / **Marketing Data Analytics** roles, remote. → **[LinkedIn](https://linkedin.com/in/glebads)**
+
+<sub>marketing analytics · analytics engineering · marketing data analyst · AI-native marketing manager · GA4 · BigQuery · BigQuery ML · dbt · server-side GTM · attribution modeling · marketing mix modeling (MMM) · incrementality · PPC automation · Google Ads API · budget optimization · A/B testing · cohort analysis · retention modeling · Python · SQL · Looker Studio · Power BI · n8n</sub>
