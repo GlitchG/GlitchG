@@ -1,6 +1,6 @@
 ### Hi, I'm Gleb 👋
 
-**Marketing Data Analyst & Peerformance Marketer* · 12+ years in · Madeira, Portugal — working remotely with teams across whole world.
+**Marketing Data Analyst & Performance Marketer** · 12+ years in · Madeira, Portugal — working remotely with teams across the world.
 
 Open to **Marketing Analytics** and **Data-Driven / AI-Native Marketing Manager** roles, remote.
 
@@ -8,10 +8,10 @@ Open to **Marketing Analytics** and **Data-Driven / AI-Native Marketing Manager*
 ![SQL](https://img.shields.io/badge/SQL-025E8C?logo=amazondynamodb&logoColor=white)
 ![BigQuery](https://img.shields.io/badge/BigQuery-669DF6?logo=googlebigquery&logoColor=white)
 ![GA4](https://img.shields.io/badge/GA4-E37400?logo=googleanalytics&logoColor=white)
-![Data Studio](https://img.shields.io/badge/Looker%20Studio-4285F4?logo=looker&logoColor=white)
+![Looker Studio](https://img.shields.io/badge/Looker%20Studio-4285F4?logo=looker&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-EA4B71?logo=n8n&logoColor=white)
 
-I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Marketing mix models that size what budget really drives. Dashboards that surface the right metric at the right grain. And, increasingly, the pipelines and bots that turn the analysis into action automatically. I speak: English, Russian, Poruguese fluently and intermediate Spanish
+I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Marketing mix models that size what budget really drives. Dashboards that surface the right metric at the right grain. And, increasingly, the pipelines and bots that turn the analysis into action automatically. I speak English, Russian, and Portuguese fluently, plus intermediate Spanish.
 
 #### What I do
 
@@ -22,7 +22,7 @@ I spend most of my time turning messy ad and product data into things people act
 #### Stack
 
 - **Data & modeling:** GA4, BigQuery, server-side GTM, AppsFlyer, Triple Whale
-- **BI:** Data Studio, Power BI
+- **BI:** Looker Studio, Power BI
 - **Ad platforms:** Google Ads, Meta Ads, Yandex Direct
 - **Automation:** Python, n8n, Telegram bots
 - **Programming languages:** SQL, Python, JavaScript
