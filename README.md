@@ -11,7 +11,7 @@ Open to **Marketing Analytics** and **Data-Driven / AI-Native Marketing Manager*
 ![Data Studio](https://img.shields.io/badge/Looker%20Studio-4285F4?logo=looker&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-EA4B71?logo=n8n&logoColor=white)
 
-I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Marketing mix models that size what budget really drives. Dashboards that surface the right metric at the right grain. And, increasingly, the pipelines and bots that turn the analysis into action automatically. ** I speak:** English, Russian, Poruguese fluently and intermediate Spanish
+I spend most of my time turning messy ad and product data into things people actually act on. Attribution models that tell you which channels work. Marketing mix models that size what budget really drives. Dashboards that surface the right metric at the right grain. And, increasingly, the pipelines and bots that turn the analysis into action automatically. I speak: English, Russian, Poruguese fluently and intermediate Spanish
 
 #### What I do
 
