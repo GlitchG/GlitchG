@@ -28,29 +28,40 @@ Open `colab.ipynb` in Colab and select **Runtime → T4 GPU**, then **Run all**.
 Works on Apple Silicon (M1–M4) and Intel Macs. There's no NVIDIA GPU on a Mac, so the models run on the CPU:
 slower than Colab, but your audio never leaves your computer.
 
-**1. Get the code** (Terminal, one time):
+Open **Terminal** (press ⌘ Space, type `Terminal`, press Enter). Paste each command and press Enter.
+
+**1. Download the tool** (one time):
 ```bash
 git clone https://github.com/glitchg/glitchg.git ~/WhoSaidWhat
-open ~/WhoSaidWhat/tools/audio-diarization/mac
+```
+If a pop-up asks to install *command line developer tools*, click **Install**, then run the command again.
+If you get `destination path ... already exists`, run `cd ~/WhoSaidWhat && git pull` instead.
+
+**2. Install** (one time, ~10–15 min, downloads ~2.5 GB). Wait for **✅ Done!**:
+```bash
+bash ~/WhoSaidWhat/tools/audio-diarization/mac/Install.command
 ```
 
-**2. In the Finder window that opens, double-click:**
+**3. Open the app** (do this every time). It opens in your browser. Keep the Terminal window open while
+you use it; close the window to stop the app:
+```bash
+bash ~/WhoSaidWhat/tools/audio-diarization/mac/"Who Said What.command"
+```
 
-| File | What it does |
-|---|---|
-| `Install.command` | One-time setup (~10 min, downloads ~2.5 GB). Installs everything into the project folder; no Homebrew needed |
-| `Who Said What.command` | Opens the app in your browser. Upload or record audio → transcript. Close the Terminal window to stop |
-| `Start Telegram Bot.command` | Runs the Telegram bot from your Mac and keeps the Mac awake while it runs |
+To run the Telegram bot from your Mac instead, use this command. It keeps the Mac awake while the bot runs:
+```bash
+bash ~/WhoSaidWhat/tools/audio-diarization/mac/"Start Telegram Bot.command"
+```
 
-If macOS says the file *"can't be opened because it is from an unidentified developer"*, right-click it →
-**Open** → **Open**. You only need to do this once per file.
+*Shortcut:* in Finder, open `WhoSaidWhat/tools/audio-diarization/mac` and double-click these files instead.
+If macOS says *"unidentified developer"*, right-click the file → **Open** → **Open**.
 
-**3. Keys (optional)** go in `tools/audio-diarization/.env`, which the installer creates. Open it with
+**Keys (optional)** go in `tools/audio-diarization/.env`, which the installer creates. Open it with
 `open -e ~/WhoSaidWhat/tools/audio-diarization/.env`:
 - `ANTHROPIC_API_KEY=` enables Claude auto roles
 - `TELEGRAM_BOT_TOKEN=` and `ALLOWED_USER_IDS=` are needed for the bot
 
-**4. From Terminal:** the installer adds a `whosaid` command (open a new Terminal window first):
+**Terminal command:** the installer adds a `whosaid` command (open a new Terminal window first):
 ```bash
 whosaid ~/Downloads/call.m4a --roles "Manager,Client"
 whosaid ~/Downloads/call.m4a --auto-roles -f md -o ~/Desktop/transcripts/
