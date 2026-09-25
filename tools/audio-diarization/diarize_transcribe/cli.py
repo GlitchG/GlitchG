@@ -23,6 +23,12 @@ def main(argv: list[str] | None = None) -> int:
         help='Comma-separated names in order of first appearance, e.g. "Interviewer,Candidate". '
         "Unnamed speakers stay 'Speaker N'.",
     )
+    p.add_argument(
+        "--auto-roles",
+        action="store_true",
+        help="Let Claude guess roles from the conversation (needs ANTHROPIC_API_KEY). Ignored if --roles is set.",
+    )
+    p.add_argument("--context", help='Optional description for --auto-roles, e.g. "sales call with a hotel owner"')
     p.add_argument("-f", "--format", choices=FORMATS, default="txt", help="Output format (default: txt)")
     p.add_argument("-o", "--out-dir", type=Path, help="Write <name>.<format> here instead of printing")
     p.add_argument("--no-timestamps", action="store_true", help="Hide [h:mm:ss] in txt/md output")
@@ -37,7 +43,12 @@ def main(argv: list[str] | None = None) -> int:
 
     for audio in args.audio:
         result = run(audio, diar_model=args.diar_model, asr_model=args.asr_model, max_pause=args.max_pause)
-        text = render(args.format, result.turns, roles, timestamps=not args.no_timestamps, segments=result.segments)
+        file_roles = roles
+        if not file_roles and args.auto_roles:
+            from .roles import guess_roles
+
+            file_roles = guess_roles(result.turns, args.context)
+        text = render(args.format, result.turns, file_roles, timestamps=not args.no_timestamps, segments=result.segments)
         if args.out_dir:
             args.out_dir.mkdir(parents=True, exist_ok=True)
             out = args.out_dir / f"{Path(audio).stem}.{args.format}"

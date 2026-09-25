@@ -31,6 +31,44 @@ pip install -r requirements.txt      # also install ffmpeg: brew/apt install ffm
 python app.py                        # web UI at http://127.0.0.1:7860
 ```
 
+### Option 3: Telegram bot
+Forward a voice message, audio file or video to your bot and get the transcript back in the chat.
+
+1. Create a bot with [@BotFather](https://t.me/BotFather) and copy its token.
+2. Put the token in an environment variable. **Never** paste it into code or commit it:
+   ```bash
+   cp .env.example .env        # then fill in TELEGRAM_BOT_TOKEN and ALLOWED_USER_IDS
+   set -a; source .env; set +a
+   python bot.py
+   ```
+3. Send `/start` to the bot. It replies with your Telegram user id. Put that id in `ALLOWED_USER_IDS`
+   so that only you (and anyone else you list) can use the bot and your GPU.
+
+What the bot does:
+
+| You send | You get |
+|---|---|
+| Voice message / audio / video / video note | A transcript with speaker roles in the chat, plus a file if the transcript is long |
+| Caption with commas, e.g. `Manager, Client` | Those names used as the roles |
+| Caption without commas, e.g. `sales call with a hotel owner` | That description passed to Claude as context for guessing roles |
+| `/roles Manager, Client` | Default roles for this chat. `/roles` on its own clears them |
+| `/auto` | Turns automatic role detection with Claude on or off |
+| `/format md` | Also sends a `.md` / `.srt` / `.json` file |
+
+Roles are chosen in this order: caption names, then `/roles`, then Claude's guess (only if `ANTHROPIC_API_KEY` is set), then `Speaker N`.
+
+**Limits:** Telegram only lets bots download files up to **20 MB**. Voice messages are heavily compressed,
+so 20 MB is more than an hour of voice. Call recordings (m4a, wav) are often bigger. For those, use the web UI or the CLI, or
+compress the file first (e.g. `ffmpeg -i call.m4a -ac 1 -b:a 32k call.ogg`).
+
+**Hosting the bot:**
+- *To try it out:* the last cell of `colab.ipynb` runs the bot on Colab's free GPU. The bot stops when the Colab session ends.
+- *Always on:* run the Docker image on any machine with an NVIDIA GPU, such as a cloud GPU VM:
+  ```bash
+  docker build -t who-said-what .
+  docker run -d --gpus all --env-file .env -v whosaid-models:/models --restart unless-stopped who-said-what
+  ```
+
 ### Command line
 ```bash
 # Print the transcript
@@ -47,6 +85,19 @@ python -m diarize_transcribe.cli voice/*.ogg -f srt -o subs/
 
 The diarizer numbers speakers **in order of first appearance**, so `--roles "Interviewer,Candidate"`
 gives the first person to speak the name *Interviewer*. Speakers you don't name stay as `Speaker N`.
+
+### Automatic roles with Claude
+Claude can also guess roles from what people say. For example, it can tell who asks the questions,
+who is being sold to, or who is addressed as "doutora". To enable it, set `ANTHROPIC_API_KEY`, then:
+
+```bash
+python -m diarize_transcribe.cli call.mp3 --auto-roles --context "sales call with a hotel owner"
+```
+
+In the web UI, tick **Guess roles with Claude**. In the bot, it runs automatically whenever no roles were given.
+Role labels come back in the language of the conversation (e.g. *Gestor* / *Cliente*). The full transcript is
+sent to Claude in one request, which costs a few cents for an hour-long call. If the call fails,
+the tool falls back to `Speaker N`.
 
 ## Output formats
 
@@ -71,6 +122,8 @@ GROUP BY t.speaker
 | Flag | Default | Meaning |
 |---|---|---|
 | `--roles` | none | Comma-separated speaker names |
+| `--auto-roles` | off | Let Claude guess roles (needs `ANTHROPIC_API_KEY`) |
+| `--context` | none | Short description of the recording, used by `--auto-roles` |
 | `-f/--format` | `txt` | `txt`, `md`, `srt` or `json` |
 | `-o/--out-dir` | print to stdout | Folder to save output files in |
 | `--no-timestamps` | off | Hide `[h:mm:ss]` |
@@ -85,5 +138,5 @@ GROUP BY t.speaker
 
 ## Tests
 ```bash
-pip install pytest && python -m pytest    # alignment + formatting logic, no GPU needed
+pip install pytest anthropic python-telegram-bot && python -m pytest   # no GPU or API keys needed
 ```

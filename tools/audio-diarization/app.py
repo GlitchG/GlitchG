@@ -15,13 +15,16 @@ import gradio as gr
 from diarize_transcribe.cli import parse_roles
 from diarize_transcribe.formatters import render
 from diarize_transcribe.pipeline import run
+from diarize_transcribe.roles import guess_roles
 
 
-def process(audio_path: str | None, roles_text: str, fmt: str, timestamps: bool):
+def process(audio_path: str | None, roles_text: str, auto_roles: bool, fmt: str, timestamps: bool):
     if not audio_path:
         raise gr.Error("Upload or record an audio file first.")
     result = run(audio_path)
     roles = parse_roles(roles_text)
+    if not roles and auto_roles:
+        roles = guess_roles(result.turns)
     text = render(fmt, result.turns, roles, timestamps=timestamps, segments=result.segments)
 
     out = Path(tempfile.mkdtemp()) / f"{Path(audio_path).stem}.{fmt}"
@@ -45,6 +48,7 @@ with gr.Blocks(title="Who Said What") as demo:
                 label="Roles (optional, in order of first speaking)",
                 placeholder="Manager, Client",
             )
+            auto = gr.Checkbox(value=False, label="Guess roles with Claude (needs ANTHROPIC_API_KEY)")
             fmt = gr.Radio(["txt", "md", "srt", "json"], value="txt", label="Format")
             ts = gr.Checkbox(value=True, label="Show timestamps")
             btn = gr.Button("Transcribe", variant="primary")
@@ -52,7 +56,7 @@ with gr.Blocks(title="Who Said What") as demo:
             summary = gr.Markdown()
             transcript = gr.Textbox(label="Transcript", lines=24, show_copy_button=True)
             file_out = gr.File(label="Download")
-    btn.click(process, [audio, roles, fmt, ts], [transcript, file_out, summary])
+    btn.click(process, [audio, roles, auto, fmt, ts], [transcript, file_out, summary])
 
 
 if __name__ == "__main__":

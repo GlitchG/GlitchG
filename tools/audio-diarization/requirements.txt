@@ -3,3 +3,7 @@ nemo_toolkit[asr]>=2.7
 gradio>=4.44
 soundfile
 librosa
+# Telegram bot
+python-telegram-bot>=21
+# Optional: automatic role detection with Claude
+anthropic>=1.8
