@@ -24,14 +24,51 @@ the same speaker are then grouped into turns.
 Open `colab.ipynb` in Colab and select **Runtime → T4 GPU**, then **Run all**. Open the
 `gradio.live` link and upload your audio.
 
-### Option 2: Local machine (an NVIDIA GPU is recommended; CPU works but is slow)
+### Option 2: Your Mac
+Works on Apple Silicon (M1–M4) and Intel Macs. There's no NVIDIA GPU on a Mac, so the models run on the CPU:
+slower than Colab, but your audio never leaves your computer.
+
+**1. Get the code** (Terminal, one time):
 ```bash
-cd tools/audio-diarization
-pip install -r requirements.txt      # also install ffmpeg: brew/apt install ffmpeg
-python app.py                        # web UI at http://127.0.0.1:7860
+git clone https://github.com/glitchg/glitchg.git ~/WhoSaidWhat
+open ~/WhoSaidWhat/tools/audio-diarization/mac
 ```
 
-### Option 3: Telegram bot
+**2. In the Finder window that opens, double-click:**
+
+| File | What it does |
+|---|---|
+| `Install.command` | One-time setup (~10 min, downloads ~2.5 GB). Installs everything into the project folder; no Homebrew needed |
+| `Who Said What.command` | Opens the app in your browser. Upload or record audio → transcript. Close the Terminal window to stop |
+| `Start Telegram Bot.command` | Runs the Telegram bot from your Mac and keeps the Mac awake while it runs |
+
+If macOS says the file *"can't be opened because it is from an unidentified developer"*, right-click it →
+**Open** → **Open**. You only need to do this once per file.
+
+**3. Keys (optional)** go in `tools/audio-diarization/.env`, which the installer creates. Open it with
+`open -e ~/WhoSaidWhat/tools/audio-diarization/.env`:
+- `ANTHROPIC_API_KEY=` enables Claude auto roles
+- `TELEGRAM_BOT_TOKEN=` and `ALLOWED_USER_IDS=` are needed for the bot
+
+**4. From Terminal:** the installer adds a `whosaid` command (open a new Terminal window first):
+```bash
+whosaid ~/Downloads/call.m4a --roles "Manager,Client"
+whosaid ~/Downloads/call.m4a --auto-roles -f md -o ~/Desktop/transcripts/
+```
+
+**Updating later:** `cd ~/WhoSaidWhat && git pull`.
+
+**Apple GPU (experimental):** NeMo doesn't officially support the Mac GPU. You can try it by adding
+`WHOSAID_DEVICE=mps` to `.env`. If you get errors, remove that line to go back to the CPU.
+
+### Option 3: Linux / Windows with an NVIDIA GPU
+```bash
+cd tools/audio-diarization
+pip install -r requirements.txt      # Python 3.12+
+python app.py --inbrowser            # web UI at http://127.0.0.1:7860
+```
+
+### Option 4: Telegram bot
 Forward a voice message, audio file or video to your bot and get the transcript back in the chat.
 
 1. Create a bot with [@BotFather](https://t.me/BotFather) and copy its token.
@@ -132,7 +169,7 @@ GROUP BY t.speaker
 | `--asr-model` | `nvidia/parakeet-tdt-0.6b-v3` | Any NeMo ASR model that returns word timestamps |
 
 ## Notes
-- Any audio or video format that ffmpeg can read works (mp3, m4a, ogg, wav, mp4...). Files are converted to 16 kHz mono internally.
+- Any audio or video format that ffmpeg can read works (mp3, m4a, ogg, wav, mp4...). Files are converted to 16 kHz mono internally. A portable ffmpeg is installed with the Python packages, so you don't need a system-wide install.
 - Recordings longer than 20 minutes switch Parakeet to local attention, which lets it handle up to about 3 hours in one pass.
 - The first run downloads the models (about 2.5 GB).
 

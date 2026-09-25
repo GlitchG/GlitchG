@@ -1,8 +1,10 @@
-# NeMo Speech (ASR + diarization). Needs a recent release that includes Nemotron 3 Diarization.
+# NeMo Speech (ASR + diarization). Python 3.12+; needs a recent release that includes Nemotron 3 Diarization.
 nemo_toolkit[asr]>=2.7
 gradio>=4.44
 soundfile
 librosa
+# Portable ffmpeg binary (used when ffmpeg is not installed system-wide)
+imageio-ffmpeg
 # Telegram bot
 python-telegram-bot>=21
 # Optional: automatic role detection with Claude

@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import shutil
 import subprocess
 import tempfile
@@ -39,8 +40,18 @@ class Result:
 
 
 def _device() -> str:
+    """NVIDIA GPU if present, else CPU.
+
+    WHOSAID_DEVICE overrides it, e.g. ``WHOSAID_DEVICE=mps`` to try the Apple Silicon GPU
+    (not officially supported by NeMo; unsupported ops fall back to CPU).
+    """
     import torch
 
+    override = os.environ.get("WHOSAID_DEVICE")
+    if override:
+        if override == "mps":
+            os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+        return override
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -48,9 +59,17 @@ def to_wav_16k_mono(src: str | Path, dst_dir: str | Path) -> Path:
     """Convert anything ffmpeg can read into the 16 kHz mono WAV the models expect."""
     src = Path(src)
     dst = Path(dst_dir) / f"{src.stem}_16k.wav"
-    if shutil.which("ffmpeg"):
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        try:  # portable ffmpeg from pip, so no Homebrew/apt install is needed
+            import imageio_ffmpeg
+
+            ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+        except (ImportError, RuntimeError):
+            ffmpeg = None
+    if ffmpeg:
         subprocess.run(
-            ["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-ac", "1", "-ar", str(SAMPLE_RATE), str(dst)],
+            [ffmpeg, "-y", "-loglevel", "error", "-i", str(src), "-ac", "1", "-ar", str(SAMPLE_RATE), str(dst)],
             check=True,
         )
         return dst

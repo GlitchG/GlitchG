@@ -63,5 +63,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--share", action="store_true")
     ap.add_argument("--port", type=int, default=7860)
+    ap.add_argument("--inbrowser", action="store_true", help="Open the page in the default browser")
     a = ap.parse_args()
-    demo.queue().launch(share=a.share, server_port=a.port)
+    demo.queue().launch(share=a.share, server_port=a.port, inbrowser=a.inbrowser)
