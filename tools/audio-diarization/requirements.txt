@@ -1,0 +1,5 @@
+# NeMo Speech (ASR + diarization). Needs a recent release that includes Nemotron 3 Diarization.
+nemo_toolkit[asr]>=2.7
+gradio>=4.44
+soundfile
+librosa
