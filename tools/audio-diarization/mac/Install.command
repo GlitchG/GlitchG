@@ -34,7 +34,9 @@ if ! grep -qF "$ALIAS_LINE" "$HOME/.zshrc" 2>/dev/null; then
   echo "--> Added the 'whosaid' command to ~/.zshrc (open a new Terminal window to use it)."
 fi
 
+# Dock app: click to start (no Terminal window), click again to open or stop.
+bash "$ROOT/mac/make_app.sh"
+
 echo
-echo "✅ Done! To open the app, run:"
-echo "   bash \"$ROOT/mac/Who Said What.command\""
+echo "✅ Done! Click 'Who Said What' in your Dock (or in ~/Applications) to open the app."
 read -r -p "Press Enter to close…"

@@ -42,11 +42,15 @@ If you get `destination path ... already exists`, run `cd ~/WhoSaidWhat && git p
 bash ~/WhoSaidWhat/tools/audio-diarization/mac/Install.command
 ```
 
-**3. Open the app** (do this every time). It opens in your browser. Keep the Terminal window open while
-you use it; close the window to stop the app:
-```bash
-bash ~/WhoSaidWhat/tools/audio-diarization/mac/"Who Said What.command"
-```
+**3. Open the app:** click **Who Said What** in your Dock. The installer puts it there, along with a copy in
+`~/Applications`. The app starts in the background and opens in your browser, with no Terminal window.
+Click the icon again while the app is running to **Open** it or **Stop** it.
+If something goes wrong, the log is in `~/Library/Logs/WhoSaidWhat.log`.
+
+To rebuild the Dock app (for example after moving the folder), run
+`bash ~/WhoSaidWhat/tools/audio-diarization/mac/make_app.sh`.
+To see the app's output in a Terminal window instead, run
+`bash ~/WhoSaidWhat/tools/audio-diarization/mac/"Who Said What.command"`.
 
 To run the Telegram bot from your Mac instead, use this command. It keeps the Mac awake while the bot runs:
 ```bash
