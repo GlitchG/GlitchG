@@ -18,6 +18,14 @@ from diarize_transcribe.pipeline import run
 from diarize_transcribe.roles import guess_roles
 
 
+def copyable_textbox(**kwargs) -> gr.Textbox:
+    """Textbox with a copy button; the argument name changed in Gradio 6."""
+    try:
+        return gr.Textbox(buttons=["copy"], **kwargs)
+    except TypeError:
+        return gr.Textbox(show_copy_button=True, **kwargs)
+
+
 def process(audio_path: str | None, roles_text: str, auto_roles: bool, fmt: str, timestamps: bool):
     if not audio_path:
         raise gr.Error("Upload or record an audio file first.")
@@ -54,7 +62,7 @@ with gr.Blocks(title="Who Said What") as demo:
             btn = gr.Button("Transcribe", variant="primary")
         with gr.Column():
             summary = gr.Markdown()
-            transcript = gr.Textbox(label="Transcript", lines=24, show_copy_button=True)
+            transcript = copyable_textbox(label="Transcript", lines=24)
             file_out = gr.File(label="Download")
     btn.click(process, [audio, roles, auto, fmt, ts], [transcript, file_out, summary])
 

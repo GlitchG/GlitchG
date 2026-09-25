@@ -88,9 +88,18 @@ def _duration(path: Path) -> float:
     return sf.info(str(path)).duration
 
 
+def _quiet_nemo() -> None:
+    """Hide NeMo's training/validation config warnings; real errors still show."""
+    from nemo.utils import logging as nemo_logging
+
+    nemo_logging.setLevel(logging.ERROR)
+
+
 @lru_cache(maxsize=2)
 def load_diarizer(model_name: str = DEFAULT_DIAR_MODEL):
     from nemo.collections.asr.models import SortformerEncLabelModel
+
+    _quiet_nemo()
 
     try:
         model = SortformerEncLabelModel.from_pretrained(model_name, map_location=_device())
@@ -107,6 +116,7 @@ def load_diarizer(model_name: str = DEFAULT_DIAR_MODEL):
 def load_asr(model_name: str = DEFAULT_ASR_MODEL):
     import nemo.collections.asr as nemo_asr
 
+    _quiet_nemo()
     model = nemo_asr.models.ASRModel.from_pretrained(model_name, map_location=_device())
     model.eval()
     return model

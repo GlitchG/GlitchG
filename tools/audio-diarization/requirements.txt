@@ -1,5 +1,6 @@
-# NeMo Speech (ASR + diarization). Python 3.12+; needs a recent release that includes Nemotron 3 Diarization.
-nemo_toolkit[asr]>=2.7
+# NeMo Speech (ASR + diarization), Python 3.12+. Pinned to a GitHub commit because Nemotron 3 Diarization
+# needs RoPE attention support that isn't in a PyPI release yet (3.0.0 lacks it). Needs git installed.
+nemo-toolkit[asr] @ git+https://github.com/NVIDIA/NeMo.git@cf724ac337d1ebc7d0dda1e23fb80916f52927a5
 gradio>=4.44
 soundfile
 librosa

@@ -3,7 +3,8 @@
 FROM nvcr.io/nvidia/nemo-speech:26.07.00
 
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
-RUN pip install --no-cache-dir "python-telegram-bot>=21" "anthropic>=1.8" "gradio>=4.44"
+# Newer NeMo than the container ships: Nemotron 3 Diarization needs RoPE attention support.
+RUN pip install --no-cache-dir "nemo-toolkit[asr] @ git+https://github.com/NVIDIA/NeMo.git@cf724ac337d1ebc7d0dda1e23fb80916f52927a5" "python-telegram-bot>=21" "anthropic>=1.8" "gradio>=4.44" imageio-ffmpeg
 
 WORKDIR /app
 COPY diarize_transcribe/ diarize_transcribe/

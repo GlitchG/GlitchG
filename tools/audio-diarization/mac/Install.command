@@ -35,5 +35,6 @@ if ! grep -qF "$ALIAS_LINE" "$HOME/.zshrc" 2>/dev/null; then
 fi
 
 echo
-echo "✅ Done! Double-click 'Who Said What.command' to open the app."
+echo "✅ Done! To open the app, run:"
+echo "   bash \"$ROOT/mac/Who Said What.command\""
 read -r -p "Press Enter to close…"
