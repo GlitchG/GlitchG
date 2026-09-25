@@ -29,6 +29,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Let Claude guess roles from the conversation (needs ANTHROPIC_API_KEY). Ignored if --roles is set.",
     )
     p.add_argument("--context", help='Optional description for --auto-roles, e.g. "sales call with a hotel owner"')
+    p.add_argument(
+        "--speakers",
+        type=int,
+        help="How many people talk. Extra speaker labels are merged by voice. Defaults to the number of --roles.",
+    )
+    p.add_argument("--no-merge", action="store_true", help="Don't merge speaker labels that have the same voice")
     p.add_argument("-f", "--format", choices=FORMATS, default="txt", help="Output format (default: txt)")
     p.add_argument("-o", "--out-dir", type=Path, help="Write <name>.<format> here instead of printing")
     p.add_argument("--no-timestamps", action="store_true", help="Hide [h:mm:ss] in txt/md output")
@@ -42,7 +48,14 @@ def main(argv: list[str] | None = None) -> int:
     roles = parse_roles(args.roles)
 
     for audio in args.audio:
-        result = run(audio, diar_model=args.diar_model, asr_model=args.asr_model, max_pause=args.max_pause)
+        result = run(
+            audio,
+            diar_model=args.diar_model,
+            asr_model=args.asr_model,
+            max_pause=args.max_pause,
+            num_speakers=args.speakers or (len(roles) if roles else None),
+            merge_similar_voices=not args.no_merge,
+        )
         file_roles = roles
         if not file_roles and args.auto_roles:
             from .roles import guess_roles

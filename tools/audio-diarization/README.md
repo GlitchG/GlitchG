@@ -100,6 +100,7 @@ What the bot does:
 | Caption with commas, e.g. `Manager, Client` | Those names used as the roles |
 | Caption without commas, e.g. `sales call with a hotel owner` | That description passed to Claude as context for guessing roles |
 | `/roles Manager, Client` | Default roles for this chat. `/roles` on its own clears them |
+| `/speakers 4` | Tells the bot how many people talk, so one person isn't split into two. `/speakers` on its own goes back to automatic |
 | `/auto` | Turns automatic role detection with Claude on or off |
 | `/format md` | Also sends a `.md` / `.srt` / `.json` file |
 
@@ -128,6 +129,19 @@ python -m diarize_transcribe.cli call.m4a --roles "Manager,Client" -f md -o out/
 # Batch a folder of WhatsApp/Telegram voice notes into SRT subtitles
 python -m diarize_transcribe.cli voice/*.ogg -f srt -o subs/
 ```
+
+## Speakers split in two?
+The diarizer sometimes gives one person two labels, for example when their voice or microphone changes or
+they come back after a long pause. The tool fixes this automatically. It computes a voice fingerprint for
+each label ([TitaNet](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/nemo/models/titanet_large)) and merges
+labels that sound like the same person.
+
+If you know how many people are on the call, tell it, and it merges the labels down to exactly that number:
+- **Web app:** fill in *How many people are speaking?*
+- **Terminal:** `whosaid call.m4a --speakers 4`
+- **Bot:** `/speakers 4`
+
+If you give role names (`Manager, Client, Designer, Owner`), their count is used automatically.
 
 ## Roles
 
@@ -170,6 +184,8 @@ GROUP BY t.speaker
 | Flag | Default | Meaning |
 |---|---|---|
 | `--roles` | none | Comma-separated speaker names |
+| `--speakers` | number of `--roles` | How many people talk. Extra speaker labels are merged by voice |
+| `--no-merge` | off | Don't merge speaker labels that have the same voice |
 | `--auto-roles` | off | Let Claude guess roles (needs `ANTHROPIC_API_KEY`) |
 | `--context` | none | Short description of the recording, used by `--auto-roles` |
 | `-f/--format` | `txt` | `txt`, `md`, `srt` or `json` |

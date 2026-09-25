@@ -26,11 +26,14 @@ def copyable_textbox(**kwargs) -> gr.Textbox:
         return gr.Textbox(show_copy_button=True, **kwargs)
 
 
-def process(audio_path: str | None, roles_text: str, auto_roles: bool, fmt: str, timestamps: bool):
+def process(
+    audio_path: str | None, n_speakers: float | None, roles_text: str, auto_roles: bool, fmt: str, timestamps: bool
+):
     if not audio_path:
         raise gr.Error("Upload or record an audio file first.")
-    result = run(audio_path)
     roles = parse_roles(roles_text)
+    num_speakers = int(n_speakers) if n_speakers else (len(roles) if roles else None)
+    result = run(audio_path, num_speakers=num_speakers)
     if not roles and auto_roles:
         roles = guess_roles(result.turns)
     text = render(fmt, result.turns, roles, timestamps=timestamps, segments=result.segments)
@@ -52,6 +55,13 @@ with gr.Blocks(title="Who Said What") as demo:
     with gr.Row():
         with gr.Column():
             audio = gr.Audio(sources=["upload", "microphone"], type="filepath", label="Audio")
+            n_speakers = gr.Number(
+                label="How many people are speaking? (optional, fixes over-split speakers)",
+                precision=0,
+                minimum=1,
+                maximum=8,
+                value=None,
+            )
             roles = gr.Textbox(
                 label="Roles (optional, in order of first speaking)",
                 placeholder="Manager, Client",
@@ -64,7 +74,7 @@ with gr.Blocks(title="Who Said What") as demo:
             summary = gr.Markdown()
             transcript = copyable_textbox(label="Transcript", lines=24)
             file_out = gr.File(label="Download")
-    btn.click(process, [audio, roles, auto, fmt, ts], [transcript, file_out, summary])
+    btn.click(process, [audio, n_speakers, roles, auto, fmt, ts], [transcript, file_out, summary])
 
 
 if __name__ == "__main__":

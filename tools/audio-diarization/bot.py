@@ -25,6 +25,7 @@ from diarize_transcribe.cli import parse_roles
 from diarize_transcribe.formatters import fmt_clock, render
 from diarize_transcribe.pipeline import load_asr, load_diarizer, run
 from diarize_transcribe.roles import guess_roles
+from diarize_transcribe.speakers import load_speaker_model
 
 log = logging.getLogger("bot")
 
@@ -45,6 +46,8 @@ HELP = (
     "• or a caption describing the call (e.g. sales call with a hotel owner) to help auto roles\n"
     "• or set defaults for this chat: /roles Manager, Client\n"
     "• /roles with nothing after it clears them\n"
+    "• /speakers 4 tells me how many people talk (fixes one person being split in two); "
+    "/speakers alone goes back to automatic\n"
     "• /auto toggles automatic role detection with Claude"
     + ("" if AUTO_ROLES_AVAILABLE else " (needs ANTHROPIC_API_KEY on the server)")
     + "\n• /format txt|md|srt|json sets the file format"
@@ -79,6 +82,21 @@ async def roles_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     roles = parse_roles(" ".join(context.args)) if context.args else None
     context.chat_data["roles"] = roles
     await update.message.reply_text(f"Default roles: {', '.join(roles)}" if roles else "Default roles cleared.")
+
+
+async def speakers_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not allowed(update):
+        return
+    arg = context.args[0] if context.args else ""
+    if not arg:
+        context.chat_data["speakers"] = None
+        await update.message.reply_text("Number of speakers: automatic.")
+        return
+    if not arg.isdigit() or not 1 <= int(arg) <= 8:
+        await update.message.reply_text("Usage: /speakers 4  (1-8), or /speakers to go back to automatic")
+        return
+    context.chat_data["speakers"] = int(arg)
+    await update.message.reply_text(f"Number of speakers: {arg}")
 
 
 async def auto_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -161,10 +179,16 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             tg_file = await context.bot.get_file(media.file_id)
             await tg_file.download_to_drive(src)
 
+            # Role names imply the speaker count: "Manager, Client" means 2 people.
+            caption = (update.message.caption or "").strip()
+            caption_roles = parse_roles(caption) if "," in caption else None
+            given_roles = caption_roles or context.chat_data.get("roles")
+            num_speakers = context.chat_data.get("speakers") or (len(given_roles) if given_roles else None)
+
             async with gpu_lock:
                 await status.edit_text("🎧 Transcribing and detecting speakers…")
                 await context.bot.send_chat_action(update.effective_chat.id, ChatAction.TYPING)
-                result = await asyncio.to_thread(run, src)
+                result = await asyncio.to_thread(run, src, num_speakers=num_speakers)
 
         if not result.turns:
             await status.edit_text("I couldn't hear any speech in that recording.")
@@ -172,9 +196,7 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
         # Role priority: caption "A, B" > /roles for this chat > Claude guess > "Speaker N".
         # A caption without commas is a description of the call, used as context for Claude.
-        caption = (update.message.caption or "").strip()
-        caption_roles = parse_roles(caption) if "," in caption else None
-        roles = caption_roles or context.chat_data.get("roles")
+        roles = given_roles
         roles_source = "your names"
         if not roles and AUTO_ROLES_AVAILABLE and context.chat_data.get("auto", True):
             await status.edit_text("🧠 Working out who is who…")
@@ -217,12 +239,14 @@ def main() -> None:
     log.info("Loading models (first run downloads ~2.5 GB)…")
     load_diarizer()
     load_asr()
+    load_speaker_model()
     log.info("Models ready.")
 
     app = Application.builder().token(token).concurrent_updates(True).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_cmd))
     app.add_handler(CommandHandler("roles", roles_cmd))
+    app.add_handler(CommandHandler("speakers", speakers_cmd))
     app.add_handler(CommandHandler("auto", auto_cmd))
     app.add_handler(CommandHandler("format", format_cmd))
     media_filter = (

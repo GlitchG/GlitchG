@@ -25,7 +25,7 @@ if [ ! -f .env ]; then
 fi
 
 echo "--> Downloading the models (~2.5 GB, one time)…"
-.venv/bin/python -c "from diarize_transcribe.pipeline import load_asr, load_diarizer; load_diarizer(); load_asr()"
+.venv/bin/python -c "from diarize_transcribe.pipeline import load_asr, load_diarizer; from diarize_transcribe.speakers import load_speaker_model; load_diarizer(); load_asr(); load_speaker_model()"
 
 # `whosaid` command for Terminal.
 ALIAS_LINE="alias whosaid='\"$ROOT/mac/whosaid\"'"

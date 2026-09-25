@@ -152,12 +152,31 @@ def transcribe_words(wav: Path, duration: float, model_name: str = DEFAULT_ASR_M
     return words
 
 
+def _merge_speakers(wav: Path, segments: list[Segment], num_speakers: int | None) -> list[Segment]:
+    import soundfile as sf
+
+    from .speakers import merge_speakers
+
+    try:
+        audio, sr = sf.read(str(wav), dtype="float32")
+        merged = merge_speakers(audio, sr, segments, num_speakers)
+    except Exception as exc:  # noqa: BLE001 - merging is an improvement, never a blocker
+        log.warning("Speaker merging skipped (%s: %s)", type(exc).__name__, exc)
+        return segments
+    log.info("After merging similar voices: %d speaker(s)", len({s.speaker for s in merged}))
+    return merged
+
+
 def run(
     audio_path: str | Path,
     diar_model: str = DEFAULT_DIAR_MODEL,
     asr_model: str = DEFAULT_ASR_MODEL,
     max_pause: float = 2.0,
+    num_speakers: int | None = None,
+    merge_similar_voices: bool = True,
 ) -> Result:
+    """``num_speakers``: if you know how many people talk, speakers are merged down to that
+    number. ``merge_similar_voices``: merge labels whose voices match even without a count."""
     with tempfile.TemporaryDirectory() as tmp:
         wav = to_wav_16k_mono(audio_path, tmp)
         duration = _duration(wav)
@@ -166,6 +185,9 @@ def run(
         log.info("Diarizing with %s ...", diar_model)
         segments = diarize(wav, diar_model)
         log.info("Found %d speaker(s)", len({s.speaker for s in segments}))
+
+        if num_speakers or merge_similar_voices:
+            segments = _merge_speakers(wav, segments, num_speakers)
 
         log.info("Transcribing with %s ...", asr_model)
         words = transcribe_words(wav, duration, asr_model)
