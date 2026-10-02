@@ -47,6 +47,11 @@ bash ~/WhoSaidWhat/tools/audio-diarization/mac/Install.command
 Click the icon again while the app is running to **Open** it or **Stop** it.
 If something goes wrong, the log is in `~/Library/Logs/WhoSaidWhat.log`.
 
+**Several files at once:** open the **Several files** tab, select or drop all your recordings, and click
+**Transcribe all**. They are transcribed one after another, and a status table shows the progress. When the queue
+finishes, you get one transcript per file plus `transcripts.zip`. If one file fails, the others still run. The
+speaker count, roles and format you choose apply to every file in the queue.
+
 To rebuild the Dock app (for example after moving the folder), run
 `bash ~/WhoSaidWhat/tools/audio-diarization/mac/make_app.sh`.
 To see the app's output in a Terminal window instead, run
