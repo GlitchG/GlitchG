@@ -119,7 +119,18 @@ def load_asr(model_name: str = DEFAULT_ASR_MODEL):
     _quiet_nemo()
     model = nemo_asr.models.ASRModel.from_pretrained(model_name, map_location=_device())
     model.eval()
+    _safe_chunking(model)
     return model
+
+
+def _safe_chunking(model) -> None:
+    """Chunk the subsampling conv only when needed (factor 1), never the "off" value -1.
+
+    NeMo's ConvSubsampling.forward calls ``self.conv(x)`` without ``lengths`` when the factor
+    is -1, which crashes with "MaskedConvSequential.forward() missing ... 'lengths'".
+    """
+    if hasattr(model, "change_subsampling_conv_chunking_factor"):
+        model.change_subsampling_conv_chunking_factor(1)
 
 
 def diarize(wav: Path, model_name: str = DEFAULT_DIAR_MODEL) -> list[Segment]:
@@ -134,13 +145,12 @@ def transcribe_words(wav: Path, duration: float, model_name: str = DEFAULT_ASR_M
     if long_audio:
         # Local attention lets Parakeet process up to ~3 h in one pass.
         model.change_attention_model("rel_pos_local_attn", [256, 256])
-        model.change_subsampling_conv_chunking_factor(1)
+    _safe_chunking(model)
     try:
         hyp = model.transcribe([str(wav)], timestamps=True, verbose=False)[0]
     finally:
         if long_audio:
             model.change_attention_model("rel_pos")
-            model.change_subsampling_conv_chunking_factor(-1)
 
     words = []
     for w in hyp.timestamp.get("word", []):
