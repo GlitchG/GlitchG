@@ -1,0 +1,12 @@
+# NeMo Speech (ASR + diarization), Python 3.12+. Pinned to a GitHub commit because Nemotron 3 Diarization
+# needs RoPE attention support that isn't in a PyPI release yet (3.0.0 lacks it). Needs git installed.
+nemo-toolkit[asr] @ git+https://github.com/NVIDIA/NeMo.git@cf724ac337d1ebc7d0dda1e23fb80916f52927a5
+gradio>=4.44
+soundfile
+librosa
+# Portable ffmpeg binary (used when ffmpeg is not installed system-wide)
+imageio-ffmpeg
+# Telegram bot
+python-telegram-bot>=21
+# Optional: automatic role detection with Claude
+anthropic>=1.8

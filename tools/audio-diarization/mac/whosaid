@@ -1,0 +1,5 @@
+#!/bin/bash
+# Terminal command: whosaid call.m4a --roles "Manager,Client"   (same options as the CLI)
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$ROOT/.env" ]; then set -a; source "$ROOT/.env"; set +a; fi
+PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" exec "$ROOT/.venv/bin/python" -m diarize_transcribe.cli "$@"
