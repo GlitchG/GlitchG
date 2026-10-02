@@ -7,6 +7,7 @@ Run:  python app.py            (opens http://127.0.0.1:7860)
 from __future__ import annotations
 
 import argparse
+import logging
 import tempfile
 from pathlib import Path
 
@@ -16,6 +17,8 @@ from diarize_transcribe.cli import parse_roles
 from diarize_transcribe.formatters import render
 from diarize_transcribe.pipeline import run
 from diarize_transcribe.roles import guess_roles
+
+log = logging.getLogger("whosaid")
 
 
 def copyable_textbox(**kwargs) -> gr.Textbox:
@@ -31,6 +34,18 @@ def process(
 ):
     if not audio_path:
         raise gr.Error("Upload or record an audio file first.")
+    try:
+        return _process(audio_path, n_speakers, roles_text, auto_roles, fmt, timestamps)
+    except gr.Error:
+        raise
+    except Exception as exc:  # noqa: BLE001 - show the real reason instead of a bare "Error"
+        log.exception("Transcription failed for %s", audio_path)
+        raise gr.Error(f"{type(exc).__name__}: {exc}", duration=None) from exc
+
+
+def _process(
+    audio_path: str, n_speakers: float | None, roles_text: str, auto_roles: bool, fmt: str, timestamps: bool
+):
     roles = parse_roles(roles_text)
     num_speakers = int(n_speakers) if n_speakers else (len(roles) if roles else None)
     result = run(audio_path, num_speakers=num_speakers)
@@ -83,4 +98,5 @@ if __name__ == "__main__":
     ap.add_argument("--port", type=int, default=7860)
     ap.add_argument("--inbrowser", action="store_true", help="Open the page in the default browser")
     a = ap.parse_args()
-    demo.queue().launch(share=a.share, server_port=a.port, inbrowser=a.inbrowser)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    demo.queue().launch(share=a.share, server_port=a.port, inbrowser=a.inbrowser, show_error=True)
